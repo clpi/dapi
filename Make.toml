@@ -1,0 +1,13 @@
+[tasks.deploy-dev]
+disabled = true
+
+[tasks.deploy-prod]
+disabled = true
+
+[tasks.deploy-stag]
+disabled = true
+
+[task.build]
+dsiabled = true
+
+

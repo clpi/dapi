@@ -1,0 +1,42 @@
+[package]
+name = "ddbm"
+version = "0.1.0"
+authors = ["Chris P <chrisp1877@gmail.com>"]
+edition = "2018"
+default-run = "dev"
+
+[[bin]]
+name = "dsrv"
+path = "src/bin/dsrv.rs"
+
+[[bin]]
+name = "dev"
+path = "src/bin/dev.rs"
+
+[lib]
+name = "dsrv"
+path = "src/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "*", features = ["derive"] }
+actix = "*"
+actix-web = { version = "*" }
+actix-cors = "*"
+actix-rt = "*"
+serde_json = "*"
+tokio = { version = "1.0.0", features = ["macros", "rt"] }
+dotenv = "*"
+futures = "0.3"
+juniper = "*"
+juniper_actix = "*"
+juniper_graphql_ws = "*"
+uuid = {version = "*", features = ["v4", "serde"]}
+chrono = { version = "*", features = ["serde"] }
+# sentry = "*"
+# sentry-actix = "*"
+
+[dependencies.sqlx]
+version = "*"
+features = ["postgres", "uuid", "chrono", "runtime-tokio-native-tls", "json", "migrate", "macros"]
