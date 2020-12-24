@@ -43,6 +43,6 @@ pub async fn post_sub() -> impl Responder {
 }
 
 
-pub async fn playground() -> impl Responder {
-    HttpResponse::Ok().body("")
+pub async fn playground() -> Result<HttpResponse, actix_web::Error> {
+    playground_handler("/graphql", Some("/subscriptions")).await
 }

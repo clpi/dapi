@@ -4,8 +4,8 @@ pub mod item;
 pub mod fact;
 
 use std::sync::{Arc, Mutex};
-use crate::{db::Db, gql};
-use actix_web::{web, App, middleware, http};
+use crate::{db::Db, gql, middleware};
+use actix_web::{web, App, HttpServer, HttpResponse};
 
 pub struct Api {}
 
@@ -18,11 +18,14 @@ impl Api {
     pub async fn run(&self) -> tokio::io::Result<()> {
         std::env::set_var("RUST_LOG", "info");
         let db = Db::new().await.expect("Could not init DB");
-        let app = App::new()
-            .data(Arc::new(Mutex::new(db)))
-            .wrap(middleware::Logger::default());
-        actix_web::HttpServer::new(app)
-            .bind("0.0.0.0:8080")?
+        HttpServer::new(move ||
+            App::new()
+                .data(Arc::new(Mutex::new(db.clone())))
+                .wrap(middleware::cors())
+                .wrap(middleware::compress())
+                .wrap(middleware::logger())
+                .configure(Root::register))
+            .bind(format!("{}:{}", "127.0.0.1", 8010))?
             .run().await?;
         Ok(())
     }
@@ -35,8 +38,14 @@ pub trait Router {
 
     fn routes() -> actix_web::Scope;
 
-    fn register(c: &mut web::ServiceConfig) -> &mut web::ServiceConfig {
-        c.service(Self::routes())
+    fn default_route() -> actix_web::Route {
+        web::route().to(|| HttpResponse::Found()
+            .body(Self::scope())
+        )
+    }
+
+    fn register(c: &mut web::ServiceConfig) {
+        c.service(Self::routes());
     }
 
 }
@@ -49,8 +58,8 @@ impl Router for Root {
 
     fn routes() -> actix_web::Scope {
         use web::{scope, resource, get, post};
-        scope("/graphql")
-            .service(resource("")
+        scope("")
+            .service(resource("/graphql")
                 .route(get().to(gql::gql_get))
                 .route(post().to(gql::gql_post))
             )

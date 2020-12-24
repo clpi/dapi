@@ -9,13 +9,14 @@ use sqlx::{
     }
 };
 
+#[derive(Clone)]
 pub struct Db{
     pool: PgPool,
 }
 
 impl Db {
     pub async fn new() -> sqlx::Result<Self> {
-        let db_url = dotenv::var("DB_URL")
+        let db_url = dotenv::var("DATABASE_URL")
             .unwrap_or_default();
         let pool = PgPoolOptions::new()
             .max_connections(5)

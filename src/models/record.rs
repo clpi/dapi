@@ -1,4 +1,5 @@
 use super::Model;
+use juniper::graphql_object;
 use sqlx::{
     Type, FromRow, prelude::*,
     types::{ Uuid, chrono::{Utc, DateTime} }
@@ -30,5 +31,11 @@ impl Default for Record {
 }
 
 impl Model for Record {
+
+}
+
+#[graphql_object]
+impl Record {
+    pub fn name(&self) -> String { String::from(&self.name) }
 
 }
