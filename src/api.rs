@@ -7,12 +7,15 @@ use std::sync::{Arc, Mutex};
 use crate::{db::Db, gql, middleware};
 use actix_web::{web, App, HttpServer, HttpResponse};
 
+#[derive(Debug)]
 pub struct Api {}
 
 
 impl Api {
+
     pub fn new() -> Self {
         Self {}
+
     }
 
     pub async fn run(&self) -> tokio::io::Result<()> {
@@ -25,7 +28,7 @@ impl Api {
                 .wrap(middleware::compress())
                 .wrap(middleware::logger())
                 .configure(Root::register))
-            .bind(format!("{}:{}", "127.0.0.1", 8010))?
+            .bind(format!("{}:{}", "127.0.0.1", 8018))?
             .run().await?;
         Ok(())
     }

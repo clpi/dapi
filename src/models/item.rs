@@ -7,7 +7,7 @@ use sqlx::{
 use serde::{Serialize, Deserialize};
 
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
 pub struct Item {
     pub id: Uuid,
     #[serde(skip_serializing_if = "Option::is_none")]

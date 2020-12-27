@@ -34,9 +34,21 @@ juniper_actix = "*"
 juniper_graphql_ws = "*"
 uuid = {version = "*", features = ["v4", "serde"]}
 chrono = { version = "*", features = ["serde"] }
+actix-web-prom = "0.5.0"
+actix-multipart = "0.3.0"
+prometheus = { version = "0.10.0", features = ["process"] }
 # sentry = "*"
 # sentry-actix = "*"
 
 [dependencies.sqlx]
 version = "*"
 features = ["postgres", "uuid", "chrono", "runtime-tokio-native-tls", "json", "migrate", "macros"]
+
+[profile.dev]
+lto = true
+
+[profile.release]
+lto = false
+
+[profile.bench]
+lto = false
