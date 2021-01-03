@@ -1,0 +1,30 @@
+[package]
+name = "di-api"
+version = "0.1.0"
+authors = ["Chris P <chrisp1877@gmail.com>"]
+edition = "2018"
+default-run = "dev"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "dev"
+path = "src/bin/dev.rs"
+
+[lib]
+name = "di_api"
+path = "src/lib.rs"
+
+[dependencies]
+tide = "*"
+async-std = {version = "*", features = ["attributes"]}
+futures = "*"
+uuid = {version = "*", features = ["v4", "serde"]}
+chrono = { version = "*", features = ["serde"] }
+dotenv = "*"
+juniper_graphql_ws = { version = "*", optional=true }
+juniper = { version = "*", optional=true }
+async-graphql = { version = "*", optional=true }
+async-graphql-tide = { version = "*", optional = true }
+prometheus = { version = "0.10.0", features = ["process"] }
+serde_json = "*"
