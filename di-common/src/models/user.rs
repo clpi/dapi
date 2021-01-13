@@ -11,8 +11,8 @@ use crate::auth::{hash_pwd, get_secret_key};
 #[derive(FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct User {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<i32>,
+    #[serde(default = "uuid::Uuid::new_v4")]
+    pub id: uuid::Uuid,
     pub email: String,
     pub username: String,
     pub password: String,
@@ -29,7 +29,7 @@ pub struct UserLogin {
 impl User {
     pub fn new(email: String, username: String, password: String) -> User {
         User {
-            id: None, email, username, password, created_at: Utc::now(),
+            id: uuid::Uuid::new_v4(), email, username, password, created_at: Utc::now(),
         }
     }
 
@@ -65,7 +65,7 @@ impl User {
         Ok(res)
     }
 
-    pub async fn from_id(pool: &PgPool, uid: i32) -> sqlx::Result<User> {
+    pub async fn from_id(pool: &PgPool, uid: uuid::Uuid) -> sqlx::Result<User> {
         let res: User = sqlx::query_as::<Postgres, User>("SELECT * FROM Users WHERE id=$1;")
             .bind(uid)
             .fetch_one(pool).await?;
@@ -79,7 +79,7 @@ impl User {
         Ok(res)
     }
 
-    pub async fn delete_by_id(pool: PgPool, uid: i32) -> sqlx::Result<i32> {
+    pub async fn delete_by_id(pool: PgPool, uid: uuid::Uuid) -> sqlx::Result<i32> {
         let res: i32 = sqlx::query_scalar("DELETE FROM Users WHERE id=$1 RETURNING id")
             .bind(uid)
             .fetch_one(&pool).await?;
@@ -94,9 +94,3 @@ impl User {
 
 }
 
-#[test]
-pub fn create_retrieve_user() -> () {}
-
-impl Model for User {
-    fn table() -> String { String::from("Users") }
-}

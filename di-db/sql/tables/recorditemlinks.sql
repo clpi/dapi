@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS RecordItemLinks(
-    id SERIAL PRIMARY KEY NOT NULL,
-    rid INTEGER NOT NULL REFERENCES Records(id),
-    iid INTEGER NOT NULL REFERENCES Items(id),
-    status TEXT NOT NULL DEFAULT 'active',
-    priority TEXT NOT NULL DEFAULT 'lowest',
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-);

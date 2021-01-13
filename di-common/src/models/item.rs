@@ -10,9 +10,9 @@ use super::{
 #[derive(FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct Item {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<i32>,
-    pub uid: i32,
+    #[serde(default = "uuid::Uuid::new_v4")]
+    pub id: uuid::Uuid,
+    pub uid: uuid::Uuid,
     pub name: String,
     //#[serde(default = "Status::active")]
     pub status: String,

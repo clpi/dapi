@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS UserInfo (
-    id           SERIAL PRIMARY KEY NOT NULL,
-    uid          INTEGER NOT NULL REFERENCES Users(id),
+    id           UUID PRIMARY KEY NOT NULL,
+    uid          UUID NOT NULL REFERENCES Users(id),
     first_name   TEXT CHECK (CHAR_LENGTH(first_name) < 80),
     last_name    TEXT CHECK (CHAR_LENGTH(first_name) < 80),
     bio          TEXT,
