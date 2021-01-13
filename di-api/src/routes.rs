@@ -1,4 +1,6 @@
+use async_std::prelude::*;
 pub use divc::models::{User, UserLogin};
+use tide_websockets::{Message, WebSocket};
 use tide::log::LogMiddleware;
 use tide::sessions::SessionMiddleware;
 use tide::security::{Origin, CorsMiddleware};
@@ -32,6 +34,26 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
     }).get(|req: Request<Context>| async move {
         Ok(user::get_all(req).await?)
     });
+
+    app.at("/wsm")
+        .with(WebSocket::new(|_request, mut stream| async move {
+            while let Some(Ok(Message::Text(input))) = stream.next().await {
+                let output: String = input.chars().rev().collect();
+                stream.send_string(format!("{} | {}", &input, &output)).await?;
+            }
+            Ok(())
+        }))
+        .get(|_| async move { Ok("this was not a websocket request") });
+
+    app.at("/wse")
+        .get(WebSocket::new(|_request, mut stream| async move {
+            while let Some(Ok(Message::Text(input))) = stream.next().await {
+                let output: String = input.chars().rev().collect();
+                stream.send_string(format!("{} | {}", &input, &output)).await?;
+            }
+        Ok(())
+    }));
+
 
     app.at("/user/:username").get(|mut req: Request<Context>| async move {
         let res = Response::new(200);

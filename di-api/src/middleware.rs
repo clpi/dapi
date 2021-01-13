@@ -1,16 +1,16 @@
 use tide::log::LogMiddleware;
 use tide::sessions::SessionMiddleware;
 use tide::security::{Origin, CorsMiddleware};
-use opentelemetry::sdk::propagation::{
-    BaggagePropagator, TextMapCompositePropagator, TraceContextPropagator,
-};
-use opentelemetry::{
-    global,
-    trace::{FutureExt, TraceContextExt, Tracer},
-    Context as OTContext, KeyValue,
-};
-use opentelemetry::sdk::propagation::TraceContextPropagator;
-use opentelemetry_tide::OpenTelemetryTracingMiddleware;
+// use opentelemetry::sdk::propagation::{
+//     BaggagePropagator, TextMapCompositePropagator, TraceContextPropagator,
+// };
+// use opentelemetry::{
+//     global,
+//     trace::{FutureExt, TraceContextExt, Tracer},
+//     Context as OTContext, KeyValue,
+// };
+// use opentelemetry::sdk::propagation::TraceContextPropagator;
+// use opentelemetry_tide::OpenTelemetryTracingMiddleware;
 use crate::context::Context;
 
 pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Context>> {
@@ -26,12 +26,12 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
         std::env::var("SESSION_SECRET").expect("Must be 32 byte key").as_bytes(),
     ));
 
-    opentelemetry::global::set_text_map_propagator(TraceContextPropagator::new());
-    let (tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
-        .with_service_name("di-api")
-        .install()
-        .expect("Could not install pipeline");
-    app.with(OpenTelemetryTracingMiddleware::new(tracer));
+    // opentelemetry::global::set_text_map_propagator(TraceContextPropagator::new());
+    // let (tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
+    //     .with_service_name("di-api")
+    //     .install()
+    //     .expect("Could not install pipeline");
+    // app.with(OpenTelemetryTracingMiddleware::new(tracer));
 
     app.with(tide::utils::Before(
         |mut request: tide::Request<Context>| async move {

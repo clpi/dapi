@@ -14,6 +14,24 @@ pub struct Api {}
 impl Api {
 
     pub fn new() -> Self {
+        // let metrics_exporter = opentelemetry_prometheus::exporter().init();
+        // let request_metrics = actix_web_opentelemetry::RequestMetrics::new(
+        //     opentelemetry::global::meter("actix_http_tracing"),
+        //     Some(|req: &actix_web::dev::ServiceRequest| {
+        //         req.path() == "/metrics" && req.method() == actix_web::http::Method::GET
+        //     }),
+        //     Some(metrics_exporter),
+        // );
+        // global::set_text_map_propagator(TraceContextPropagator::new());
+        // let (tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
+        //     .with_service_name("app_name")
+        //     .install()
+        //     .unwrap();
+        // Registry::default()
+        //     .with(tracing_subscriber::EnvFilter::new("INFO"))
+        //     .with(tracing_subscriber::fmt::layer())
+        //     .with(tracing_opentelemetry::layer().with_tracer(tracer))
+        //     .init();
         Self {}
 
     }

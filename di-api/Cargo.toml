@@ -29,7 +29,9 @@ opentelemetry = { version = "*", features = ["async-std"] }
 opentelemetry-jaeger = { version = "*", features = ["async-std"] }
 opentelemetry-tide = "*"
 thrift = "*"
-opentelemtry-prometheus = "*"
+tide-websockets = "0.1.0"
+# async-sqlx-session = { version = "0.2.0", features = ["pg"] }
+# opentelemtry-prometheus = "*"
 # tracing = "*"
 # tracing-opentelemtry = "*"
 # juniper_graphql_ws = { version = "*", optional=true }
