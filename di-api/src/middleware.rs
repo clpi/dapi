@@ -4,18 +4,16 @@ use tide::security::{Origin, CorsMiddleware};
 use crate::context::Context;
 
 pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Context>> {
-    app.with(CorsMiddleware::new()
-        .allow_credentials(true)
-        .allow_origin("http://localhost:5000")
-        .allow_origin("http://localhost:5001"));
-
+    app.with(cors_mw());
     app.with(LogMiddleware::new());
+    app.with(trace_middleware());
+    app.with(session_middleware());
+    session_validate(&mut app);
 
-    app.with(SessionMiddleware::new(
-        tide::sessions::MemoryStore::new(),
-        std::env::var("SESSION_SECRET").expect("Must be 32 byte key").as_bytes(),
-    ));
+    Ok(app)
+}
 
+pub fn session_validate(app: &mut tide::Server<Context>) {
     app.with(tide::utils::Before(
         |mut request: tide::Request<Context>| async move {
             let session = request.session_mut();
@@ -24,5 +22,27 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
             request
         },
     ));
-    Ok(app)
+}
+
+pub fn cors_mw() -> tide::security::CorsMiddleware {
+    CorsMiddleware::new()
+        .allow_credentials(true)
+        .allow_origin("http://localhost:5000")
+        .allow_origin("http://localhost:5001")
+}
+
+pub fn session_middleware() -> SessionMiddleware<tide::sessions::CookieStore> {
+    SessionMiddleware::new(
+        tide::sessions::CookieStore::new(),
+        std::env::var("SESSION_SECRET").expect("Must be 32 byte key").as_bytes(),
+    )
+}
+
+pub fn trace_middleware() -> tide_tracing::TraceMiddleware {
+    let subscriber = tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::TRACE)
+        .finish();
+    tracing::subscriber::set_global_default(subscriber)
+        .expect("no global subscriber has been set");
+    tide_tracing::TraceMiddleware::new()
 }
