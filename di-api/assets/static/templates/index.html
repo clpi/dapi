@@ -10,16 +10,24 @@
 
     <h3> Welcome!</h3>
 
+    <a href="/users">Users</a>
+    <a href="/login">Login</a>
+    <a href="/signup">Signup</a>
+
     <h4>Session details</h4>
     <p> Session id: {{ session }}</p>
-    <p> Expiry in: {{ expiry_in }}</p>
+    <p> Expiry in (seconds): {{ expiry_in }}</p>
     <p> Is expired: {{ is_expired }}</p>
 
     <h4>Visitor details</h4>
     <p>Host: {{ host }}</p>
     <p>Remote: {{ remote }}</p>
-    <p>Headers: {{ headers }}</p>
-
+    <p>Headers</p>
+    <ul>
+      {% for pair in headers %}
+      <li>{{ pair.0 }}, {{ pair.1 }}</li>
+      {% endfor %}
+    </ul>
 
 
   </body>

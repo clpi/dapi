@@ -25,10 +25,12 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
         let host = req.host();
         let session = req.session().id();
         let is_expired = req.session().is_expired();
-        let expiry_in = req.session().expires_in();
+        let expiry_in = req.session().expires_in().map(|d| d.as_secs());
         let remote = req.remote();
         let _auth_header = req.header("auth");
-        let headers = req.header_names().map(|h| h.to_string()).collect::<Vec<String>>();
+        let headers = req.header_names().zip(req.header_values())
+            .map(|(h, v)| (h.to_string(), v.to_string()))
+            .collect::<Vec<(String, String)>>();
         tera.render_response("index.html",
             &context! {
                 "headers" => headers,
@@ -37,7 +39,6 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
                 "remote" => remote,
                 "expiry_in" => expiry_in,
                 "is_expired" => is_expired,
-
             })
     });
 
@@ -55,11 +56,26 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
         Ok(user::get_all(req).await?)
     });
 
+    app.at("/users").get(|req: Request<Context>| async move {
+        let tera = &req.state().tera;
+        let users = user::User::get_all(&req.state().pool).await?;
+        tera.render_response("users.html", &context! { "users" => users })
+    });
+
     app.at("/:user/page").get(|req: tide::Request<Context>| async move {
         let tera = &req.state().tera;
         let user: &str = req.param("user")?;
         let user = user::User::from_username(&req.state().pool, user.to_string()).await?;
         tera.render_response("user.html", &context! { "user" => user })
+    });
+
+    app.at("/login").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        tera.render_response("login.html", &context! {})
+    });
+    app.at("/signup").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        tera.render_response("signup.html", &context! {})
     });
 
     app.at("/wsm")
