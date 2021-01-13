@@ -1,5 +1,5 @@
 [package]
-name = "divd"
+name = "divc"
 version = "0.1.0"
 authors = ["Chris P <chrisp1877@gmail.com>"]
 edition = "2018"
@@ -7,21 +7,13 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+#db={path="../db/"}
 dotenv="*"
-divc = { path ="../di-common/" }
-sqlx = { version = "0.4.2", features = [ "runtime-async-std-native-tls", "postgres", "uuid", "chrono", "json", "macros", "migrate", "tls", "ipnetwork"] }
-ipnetwork = "*"
-async-std = { version = "1.6.0", features = ["attributes"] }
-#tokio
+sqlx = { version = "0.4.2", features = [ "runtime-async-std-native-tls", "postgres", "uuid", "chrono", "json", "macros", "migrate"] }
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
 chrono = { version = "*", features = ["serde"] }
 uuid = { version = "*", features = ["serde", "v4"] }
-walkdir = "*"
-# dasp
-# radio?
-# deepspeech?
-
-[dev-dependencies]
-fake="*"
-log="*"
+argonautica="*"
+jsonwebtoken="*"
+#dasp = "*"

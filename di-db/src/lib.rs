@@ -1,7 +1,7 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+pub mod pool;
+pub mod query;
+
+pub use sqlx::FromRow;
+pub use sqlx::{Postgres, postgres::{PgPool, PgConnection, PgListener}};
+
+pub use pool::*;

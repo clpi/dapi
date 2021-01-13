@@ -1,29 +1,40 @@
-pub mod api;
-pub mod db;
-pub mod models;
+pub mod handlers;
 pub mod middleware;
-pub mod state;
+pub mod context;
 pub mod routes;
-pub mod util;
 
-use tide::Request;
-use tide::prelude::*;
-use serde::{Serialize, Deserialize};
+pub use divc::models::{User, UserLogin};
+pub use divd;
+pub use tide::{
+    http::Cookie,
+    Response, StatusCode, Request
+};
 
-pub async fn run() -> tide::Result<()> {
-    let mut app = tide::new();
-    app.at("/hello/shoes").post(order_shoes);
-    app.listen("127.0.0.1:8080").await?;
+
+pub async fn run(host: &str, port: &str) -> tide::Result<()> {
+
+    tide::log::start();
+
+    let cx = context::create().await?;
+    let mut app = tide::with_state(cx);
+
+    app = middleware::set(app).await?;
+    app = routes::set(app).await?;
+
+    app.listen(format!("{}:{}", host, port)).await?;
+
     Ok(())
 }
 
-pub async fn order_shoes(mut req: Request<()>) -> tide::Result {
-    let Animal { name, legs } = req.body_json().await?;
-    Ok(format!("Hello, {}! I've put in an order for {} shoes", name, legs).into())
+pub trait RequestExt {
+    fn resp(&self) -> String;
 }
 
-#[derive(Debug, Deserialize)]
-struct Animal {
-    name: String,
-    legs: u8,
+impl<Context> RequestExt for tide::Request<Context> {
+    fn resp(&self) -> String {
+        "response".to_string()
+    }
 }
+
+
+

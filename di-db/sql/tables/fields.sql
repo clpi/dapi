@@ -1,0 +1,9 @@
+
+CREATE TABLE IF NOT EXISTS Fields (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
+    typ TEXT NOT NULL,
+    value TEXT,
+    permission TEXT NOT NULL DEFAULT 'private',
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);

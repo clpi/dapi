@@ -1,35 +1,44 @@
 [package]
-name = "di-api"
+name = "divt"
 version = "0.1.0"
 authors = ["Chris P <chrisp1877@gmail.com>"]
 edition = "2018"
-default-run = "dev"
+default-run = "main"
+
+[[bin]]
+name="main"
+path="./src/bin/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "dev"
-path = "src/bin/dev.rs"
-
-[[bin]]
-name = "prod"
-path = "src/bin/prod.rs"
-
-[lib]
-name = "di_api"
-path = "src/lib.rs"
-
 [dependencies]
-tide = "*"
-async-std = {version = "*", features = ["attributes"]}
+divc={path="../di-common/", optional=false}
+divd={path="../di-db/", optional=false}
+tide= "*"
+async-std={version="*", features=["attributes"], optional=false}
+serde = { version = "*", features = ["derive"], optional=false }
+serde_json = { version="*", optional=false }
+async-graphql-tide= {version="*", optional=true}
+async-graphql= {version="*", optional=true}
 futures = "*"
 uuid = {version = "*", features = ["v4", "serde"]}
-serde = { version = "*", features = ["derive"] }
 chrono = { version = "*", features = ["serde"] }
 dotenv = "*"
 prometheus = { version = "0.10.0", features = ["process"] }
-serde_json = "*"
+opentelemetry = { version = "*", features = ["async-std"] }
+opentelemetry-jaeger = { version = "*", features = ["async-std"] }
+opentelemetry-tide = "*"
+thrift = "*"
+opentelemtry-prometheus = "*"
+# tracing = "*"
+# tracing-opentelemtry = "*"
 # juniper_graphql_ws = { version = "*", optional=true }
 # juniper = { version = "*", optional=true }
 # async-graphql = { version = "*", optional=true }
 # async-graphql-tide = { version = "*", optional = true }
+# tide-sqlx = "*"
+
+[features]
+default=[]
+gql=["async-graphql", "async-graphql-tide"]
+
