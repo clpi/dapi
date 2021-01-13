@@ -2,5 +2,6 @@
 members = [
 "di-api",
 "di-common",
-"di-db"
+"di-db",
+"di-cloud",
 ]

@@ -14,12 +14,13 @@ path="./src/bin/main.rs"
 [dependencies]
 divc={path="../di-common/", optional=false}
 divd={path="../di-db/", optional=false}
+div_cloud={path="../di-cloud"}
 tide= "*"
 async-std={version="*", features=["attributes"], optional=false}
 serde = { version = "*", features = ["derive"], optional=false }
 serde_json = { version="*", optional=false }
-async-graphql-tide= {version="*", optional=true}
-async-graphql= {version="*", optional=true}
+async-graphql-tide= { version = "2.4.7", optional = true }
+async-graphql= { version = "2.4.7", optional = true }
 futures = "*"
 uuid = {version = "*", features = ["v4", "serde"]}
 chrono = { version = "*", features = ["serde"] }
@@ -28,6 +29,20 @@ tide-websockets = "0.1.0"
 log = "0.4.13"
 pretty_env_logger = "0.4.0"
 prometheus = { version = "0.10.0", features = ["process"] }
+tide-naive-static-files = "2.2.0"
+tide-http-auth = "0.3.0"
+tide_compressed_sse = "4.0.1"
+tide-tera = "0.2.3"
+tide-governor = "1.0.2"
+tide-server-timing = "0.15.0"
+tide-trace = "0.3.0"
+tide-testing = "0.1.2"
+driftwood = "0.0.5"
+tera = "1.6.1"
+# tide-validator = "0.8.0"
+# tide-compress = "0.8.1"
+# opentelemetry = "0.11.2"
+# opentelemetry-tide = "0.5.2"
 # opentelemetry = { version = "*", features = ["async-std"] }
 # opentelemetry-jaeger = { version = "*", features = ["async-std"] }
 # opentelemetry-tide = "*"

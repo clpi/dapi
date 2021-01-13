@@ -8,6 +8,8 @@ use crate::handlers::*;
 use divd::PgPool;
 use crate::context::Context;
 use crate::*;
+use tera::Tera;
+use tide_tera::prelude::*;
 
 pub use divd;
 pub use tide::{
@@ -18,7 +20,25 @@ pub use tide::{
 
 pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Context>> {
     app.at("/").get(|mut req: tide::Request<Context>| async move {
-        Ok("hello world!")
+        let tera = &req.state().tera;
+        let _auth_cookie = req.cookie("auth");
+        let host = req.host();
+        let session = req.session().id();
+        let is_expired = req.session().is_expired();
+        let expiry_in = req.session().expires_in();
+        let remote = req.remote();
+        let _auth_header = req.header("auth");
+        let headers = req.header_names().map(|h| h.to_string()).collect::<Vec<String>>();
+        tera.render_response("index.html",
+            &context! {
+                "headers" => headers,
+                "host" => host,
+                "session" => session,
+                "remote" => remote,
+                "expiry_in" => expiry_in,
+                "is_expired" => is_expired,
+
+            })
     });
 
     app.at("/auth/login").post(|req: tide::Request<Context>| async move {
@@ -33,6 +53,13 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
         Ok("hello")
     }).get(|req: Request<Context>| async move {
         Ok(user::get_all(req).await?)
+    });
+
+    app.at("/:user/page").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        let user: &str = req.param("user")?;
+        let user = user::User::from_username(&req.state().pool, user.to_string()).await?;
+        tera.render_response("user.html", &context! { "user" => user })
     });
 
     app.at("/wsm")

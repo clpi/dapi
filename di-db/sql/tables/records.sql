@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Records (
     id UUID PRIMARY KEY NOT NULL,
-    uid INTEGER NOT NULL REFERENCES Users(id),
+    uid UUID NOT NULL REFERENCES Users(id),
     name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
     status TEXT NOT NULL DEFAULT 'active',
     permission TEXT NOT NULL DEFAULT 'private',

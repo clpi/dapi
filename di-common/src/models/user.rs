@@ -9,7 +9,6 @@ use sqlx::prelude::*;
 use crate::auth::{hash_pwd, get_secret_key};
 
 #[derive(FromRow, Serialize, Deserialize, Clone)]
-#[serde(rename_all="camelCase")]
 pub struct User {
     #[serde(default = "uuid::Uuid::new_v4")]
     pub id: uuid::Uuid,
@@ -36,7 +35,7 @@ impl User {
     //pub async fn query() -> QueryBuilder<User> {}
 
     //TODO commit transaction
-    pub async fn create(pool: PgPool, user: User) -> sqlx::Result<i32> {
+    pub async fn create(pool: &PgPool, user: User) -> sqlx::Result<i32> {
         let query = sqlx::query("INSERT INTO Users (email, username, password)
             VALUES ($1, $2, $3)")
             .bind(user.email)
@@ -47,21 +46,21 @@ impl User {
     }
 
     //TODO commit transaction
-    pub async fn insert(self, pool: PgPool) -> sqlx::Result<u32> {
+    pub async fn insert(self, pool: &PgPool) -> sqlx::Result<u32> {
         let mut conn = pool.acquire().await?;
         let query = sqlx::query("INSERT INTO Users (email, username, password)
             VALUES ($1, $2, $3)")
             .bind(self.email)
             .bind(self.username)
             .bind(self.password)
-            .execute(&pool).await?;
+            .execute(pool).await?;
         //let res = pool.execute(query).await?;
         Ok(query.rows_affected() as u32)
     }
 
-    pub async fn get_all(pool: PgPool) -> sqlx::Result<Vec<User>> {
+    pub async fn get_all(pool: &PgPool) -> sqlx::Result<Vec<User>> {
         let res: Vec<User> = sqlx::query_as::<Postgres, User>("SELECT * FROM Users;")
-            .fetch_all(&pool).await?;
+            .fetch_all(pool).await?;
         Ok(res)
     }
 
@@ -72,23 +71,23 @@ impl User {
         Ok(res)
     }
 
-    pub async fn from_username(pool: PgPool, username: String) -> sqlx::Result<User> {
+    pub async fn from_username(pool: &PgPool, username: String) -> sqlx::Result<User> {
         let res: User = sqlx::query_as::<Postgres, User>("SELECT * FROM Users WHERE username=$1;")
             .bind(username)
-            .fetch_one(&pool).await?;
+            .fetch_one(pool).await?;
         Ok(res)
     }
 
-    pub async fn delete_by_id(pool: PgPool, uid: uuid::Uuid) -> sqlx::Result<i32> {
+    pub async fn delete_by_id(pool: &PgPool, uid: uuid::Uuid) -> sqlx::Result<i32> {
         let res: i32 = sqlx::query_scalar("DELETE FROM Users WHERE id=$1 RETURNING id")
             .bind(uid)
-            .fetch_one(&pool).await?;
+            .fetch_one(pool).await?;
         Ok(res)
     }
 
-    pub async fn get_count(pool: PgPool) -> sqlx::Result<i32> {
+    pub async fn get_count(pool: &PgPool) -> sqlx::Result<i32> {
         let (count,): (i32,) = sqlx::query_as("SELECT COUNT(*) FROM Users")
-            .fetch_one(&pool).await?;
+            .fetch_one(pool).await?;
         Ok(count)
     }
 

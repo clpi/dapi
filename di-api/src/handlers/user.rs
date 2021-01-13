@@ -1,7 +1,7 @@
 pub use crate::{Request, Response, context::Context, StatusCode, Cookie, UserLogin, User};
 
 pub async fn get_all(req: Request<Context>) -> tide::Result<Response> {
-    match User::get_all(req.state().pool.clone()).await {
+    match User::get_all(&req.state().pool.clone()).await {
         Ok(users) => {
             let mut resp = Response::new(StatusCode::Ok);
             resp.set_body(serde_json::to_string(&users).unwrap());
