@@ -24,12 +24,14 @@ futures = "*"
 uuid = {version = "*", features = ["v4", "serde"]}
 chrono = { version = "*", features = ["serde"] }
 dotenv = "*"
-prometheus = { version = "0.10.0", features = ["process"] }
-opentelemetry = { version = "*", features = ["async-std"] }
-opentelemetry-jaeger = { version = "*", features = ["async-std"] }
-opentelemetry-tide = "*"
-thrift = "*"
 tide-websockets = "0.1.0"
+log = "0.4.13"
+pretty_env_logger = "0.4.0"
+prometheus = { version = "0.10.0", features = ["process"] }
+# opentelemetry = { version = "*", features = ["async-std"] }
+# opentelemetry-jaeger = { version = "*", features = ["async-std"] }
+# opentelemetry-tide = "*"
+# thrift = "*"
 # async-sqlx-session = { version = "0.2.0", features = ["pg"] }
 # opentelemtry-prometheus = "*"
 # tracing = "*"

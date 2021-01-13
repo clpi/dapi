@@ -1,12 +1,7 @@
 pub mod user;
 pub mod record;
-pub mod relations;
-pub mod links;
-pub mod entry;
 pub mod item;
-pub mod field;
 pub mod group;
-pub mod rule;
 pub mod action;
 
 pub use self::{
@@ -52,9 +47,9 @@ pub enum Priority {
 
 #[derive(sqlx::Type)]
 #[sqlx(rename = "priority", rename_all = "lowercase")]
-pub enum Status { 
-    Deleted, 
-    Archived, 
+pub enum Status {
+    Deleted,
+    Archived,
     Active
 }
 

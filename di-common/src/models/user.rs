@@ -37,8 +37,11 @@ impl User {
 
     //TODO commit transaction
     pub async fn create(pool: PgPool, user: User) -> sqlx::Result<i32> {
-        let query = sqlx::query!("INSERT INTO Users (email, username, password)
-            VALUES ($1, $2, $3)", user.email, user.username, user.password);
+        let query = sqlx::query("INSERT INTO Users (email, username, password)
+            VALUES ($1, $2, $3)")
+            .bind(user.email)
+            .bind(user.username)
+            .bind(user.password);
         let res = pool.execute(query).await?;
         Ok(res.rows_affected() as i32)
     }

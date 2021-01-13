@@ -1,57 +1,6 @@
-[package]
-name = "ddbm"
-version = "0.1.0"
-authors = ["Chris P <chrisp1877@gmail.com>"]
-edition = "2018"
-default-run = "dev"
-
-[[bin]]
-name = "dsrv"
-path = "src/bin/dsrv.rs"
-
-[[bin]]
-name = "dev"
-path = "src/bin/dev.rs"
-
-[lib]
-name = "dsrv"
-path = "src/lib.rs"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-serde = { version = "*", features = ["derive"] }
-actix = "*"
-actix-web = { version = "*" }
-actix-cors = "*"
-actix-rt = "*"
-serde_json = "*"
-tokio = { version = "1.0.0", features = ["macros", "rt-multi-thread"] }
-dotenv = "*"
-futures = "0.3"
-juniper = "*"
-juniper_actix = "*"
-juniper_graphql_ws = "*"
-uuid = {version = "*", features = ["v4", "serde"]}
-chrono = { version = "*", features = ["serde"] }
-actix-web-prom = "0.5.0"
-actix-multipart = "0.3.0"
-prometheus = { version = "0.10.0", features = ["process"] }
-opentelemetry = { version = "*", features = ["tokio"] }
-actix-web-opentelemetry = "0.9.0"
-tracing-subscriber = "0.2.15"
-# sentry = "*"
-# sentry-actix = "*"
-
-[dependencies.sqlx]
-version = "*"
-features = ["postgres", "uuid", "chrono", "runtime-tokio-native-tls", "json", "migrate", "macros"]
-
-[profile.dev]
-lto = true
-
-[profile.release]
-lto = false
-
-[profile.bench]
-lto = false
+[workspace]
+members = [
+"di-api",
+"di-common",
+"di-db"
+]
