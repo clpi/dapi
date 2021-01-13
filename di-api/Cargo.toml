@@ -11,6 +11,10 @@ default-run = "dev"
 name = "dev"
 path = "src/bin/dev.rs"
 
+[[bin]]
+name = "prod"
+path = "src/bin/prod.rs"
+
 [lib]
 name = "di_api"
 path = "src/lib.rs"
@@ -20,11 +24,12 @@ tide = "*"
 async-std = {version = "*", features = ["attributes"]}
 futures = "*"
 uuid = {version = "*", features = ["v4", "serde"]}
+serde = { version = "*", features = ["derive"] }
 chrono = { version = "*", features = ["serde"] }
 dotenv = "*"
-juniper_graphql_ws = { version = "*", optional=true }
-juniper = { version = "*", optional=true }
-async-graphql = { version = "*", optional=true }
-async-graphql-tide = { version = "*", optional = true }
 prometheus = { version = "0.10.0", features = ["process"] }
 serde_json = "*"
+# juniper_graphql_ws = { version = "*", optional=true }
+# juniper = { version = "*", optional=true }
+# async-graphql = { version = "*", optional=true }
+# async-graphql-tide = { version = "*", optional = true }
