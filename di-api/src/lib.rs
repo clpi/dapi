@@ -17,13 +17,15 @@ pub async fn run(host: &str, port: &str) -> tide::Result<()> {
 
     let cx = context::create().await?;
     let mut app = tide::with_state(cx);
-
-    app = middleware::set(app).await?;
-    app = routes::set(app).await?;
-
+    configure(&mut app);
     app.listen(format!("{}:{}", host, port)).await?;
 
     Ok(())
+}
+
+pub fn configure(app: &mut tide::Server<context::Context>) {
+    middleware::set(app);
+    routes::set(app);
 }
 
 pub trait RequestExt {

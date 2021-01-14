@@ -3,14 +3,12 @@ use tide::sessions::SessionMiddleware;
 use tide::security::{Origin, CorsMiddleware};
 use crate::context::Context;
 
-pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Context>> {
+pub fn set(app: &mut tide::Server<Context>) {
     app.with(cors_mw());
     app.with(LogMiddleware::new());
-    app.with(trace_middleware());
+    //app.with(trace_middleware());
     app.with(session_middleware());
-    session_validate(&mut app);
-
-    Ok(app)
+    session_validate(app);
 }
 
 pub fn session_validate(app: &mut tide::Server<Context>) {

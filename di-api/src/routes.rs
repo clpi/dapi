@@ -1,82 +1,39 @@
+pub mod user;
+pub mod public;
+pub mod item;
+pub mod record;
+pub mod auth;
+pub mod admin;
+
 use async_std::prelude::*;
 pub use divc::models::{User, UserLogin};
 use tide_websockets::{Message, WebSocket};
-use tide::log::LogMiddleware;
-use tide::sessions::SessionMiddleware;
-use tide::security::{Origin, CorsMiddleware};
-use crate::handlers::*;
-use divd::PgPool;
 use crate::context::Context;
 use crate::*;
 use tera::Tera;
 use tide_tera::prelude::*;
 
-pub use divd;
 pub use tide::{
     http::Cookie,
     Response, StatusCode, Request
 };
 
 
-pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Context>> {
-    app.at("/").get(|mut req: tide::Request<Context>| async move {
-        let tera = &req.state().tera;
-        let _auth_cookie = req.cookie("auth");
-        let host = req.host();
-        let session = req.session().id();
-        let is_expired = req.session().is_expired();
-        let expiry_in = req.session().expires_in().map(|d| d.as_secs());
-        let remote = req.remote();
-        let _auth_header = req.header("auth");
-        let headers = req.header_names().zip(req.header_values())
-            .map(|(h, v)| (h.to_string(), v.to_string()))
-            .collect::<Vec<(String, String)>>();
-        tera.render_response("index.html",
-            &context! {
-                "headers" => headers,
-                "host" => host,
-                "session" => session,
-                "remote" => remote,
-                "expiry_in" => expiry_in,
-                "is_expired" => is_expired,
-            })
-    });
-
+pub fn set(app: &mut tide::Server<Context>) {
     app.at("/auth/login").post(|req: tide::Request<Context>| async move {
-        Ok(auth::login(req).await?)
+        Ok(self::auth::login(req).await?)
     });
 
     app.at("/auth/signup").post(|req: Request<Context>| async move {
-        Ok(auth::signup(req).await?)
+        Ok(self::auth::signup(req).await?)
     });
 
-    app.at("/user").post(|req: Request<Context>| async move {
+    app.at("/user").post(|_: Request<Context>| async move {
         Ok("hello")
     }).get(|req: Request<Context>| async move {
-        Ok(user::get_all(req).await?)
+        Ok(self::user::get_all(req).await?)
     });
 
-    app.at("/users").get(|req: Request<Context>| async move {
-        let tera = &req.state().tera;
-        let users = user::User::get_all(&req.state().pool).await?;
-        tera.render_response("users.html", &context! { "users" => users })
-    });
-
-    app.at("/:user/page").get(|req: tide::Request<Context>| async move {
-        let tera = &req.state().tera;
-        let user: &str = req.param("user")?;
-        let user = user::User::from_username(&req.state().pool, user.to_string()).await?;
-        tera.render_response("user.html", &context! { "user" => user })
-    });
-
-    app.at("/login").get(|req: tide::Request<Context>| async move {
-        let tera = &req.state().tera;
-        tera.render_response("login.html", &context! {})
-    });
-    app.at("/signup").get(|req: tide::Request<Context>| async move {
-        let tera = &req.state().tera;
-        tera.render_response("signup.html", &context! {})
-    });
 
     app.at("/wsm")
         .with(WebSocket::new(|_request, mut stream| async move {
@@ -97,7 +54,6 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
         Ok(())
     }));
 
-
     app.at("/user/:username").get(|mut req: Request<Context>| async move {
         let res = Response::new(200);
         let username: String = req.param("username").unwrap().to_string();
@@ -116,5 +72,6 @@ pub async fn set(mut app: tide::Server<Context>) -> tide::Result<tide::Server<Co
        Ok(res)
     });
 
-    Ok(app)
+    public::set_routes(app);
+    admin::set_routes(app);
 }
