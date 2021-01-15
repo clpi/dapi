@@ -3,11 +3,13 @@ pub mod record;
 pub mod item;
 pub mod group;
 pub mod action;
+pub mod fact;
 
 pub use self::{
     user::User,
     record::Record,
     item::Item,
+    fact::Fact,
 };
 
 pub use sqlx::FromRow;
@@ -16,6 +18,7 @@ pub use serde::{Deserialize, Serialize};
 
 pub trait Model {
     fn table() -> String;
+
 }
 
 

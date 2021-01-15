@@ -1,3 +1,4 @@
+use divc::models::Model;
 use chrono::{Utc, DateTime};
 use serde::{Serialize, Deserialize};
 use sqlx::postgres::*;
@@ -12,12 +13,29 @@ pub struct Db {
 }
 
 impl Db {
+
+    pub fn url() -> Result<String, dotenv::Error> {
+        dotenv::var("DATABASE_URL")
+    }
+
+    pub fn pool_options() -> sqlx::pool::PoolOptions<Postgres> {
+        PgPoolOptions::new()
+            .max_connections(5)
+    }
+
     pub async fn new() -> sqlx::Result<Self> {
-        let options: PgConnectOptions = dotenv::var("DATABASE_URL")
-            .expect("DATABASE_URL unset")
-            .parse()?;
-        let pool = PgPool::connect_with(options).await?;
+        let pool = Self::pool_options()
+            .connect(&Self::url()?)
+            .await?;
         Ok ( Db { pool } )
+    }
+
+    pub fn new_blocking() -> sqlx::Result<Self> {
+        let pool = Self::pool_options()
+            .connect(&Self::url()?);
+        let pool = async_std::task::block_on(pool)?;
+        Ok( Self { pool  } )
+
     }
 
     pub async fn listen(self, channel: &str) -> sqlx::Result<()> {
@@ -31,15 +49,48 @@ impl Db {
         Ok(())
     }
 
-    pub async fn clear(self) -> sqlx::Result<Self> {
-        // sqlx::query!("DROP TABLE IF EXISTS Items CASCADE;")
-        //     .execute(&self.pool).await?;
-        // sqlx::query!("DROP TABLE IF EXISTS Records CASCADE;")
-        //     .execute(&self.pool).await?;
-        // sqlx::query!("DROP TABLE IF EXISTS Users CASCADE;")
-        //     .execute(&self.pool).await?;
-        Ok(self)
+    pub async fn execute(&self, query: &str) -> sqlx::Result<()> {
+        (self.pool).execute(query).await?;
+        Ok(())
     }
+
+    pub async fn up(&self) -> sqlx::Result<()> {
+        (self.pool).execute(include_str!("../sql/up.sql")).await?;
+        Ok(())
+    }
+
+    pub async fn down(&self) -> sqlx::Result<()> {
+        (self.pool).execute(include_str!("../sql/down.sql")).await?;
+        Ok(())
+    }
+
+    pub async fn clear(&self) -> sqlx::Result<()> {
+        (self.pool).execute(include_str!("../sql/clear.sql")).await?;
+        Ok(())
+    }
+
+    pub async fn clear_table(&self, table: &str) -> sqlx::Result<()> {
+        sqlx::query("DELETE FROM ?")
+            .bind(table)
+            .execute(&self.pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn drop_table(&self, table: &str) -> sqlx::Result<()> {
+        sqlx::query("DROP TABLE IF EXISTS ?")
+            .bind(table)
+            .execute(&self.pool)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn conn(&self) -> sqlx::Result<sqlx::pool::PoolConnection<Postgres>> {
+        Ok(self.pool.try_acquire().await?)
+
+    }
+
+    pub async fn from_id(i)
 
     pub async fn up(self) -> sqlx::Result<Self> {
         sqlx::query_file_unchecked!("sql/tables/users.sql")
@@ -54,6 +105,12 @@ impl Db {
     }
 }
 
+pub struct TableQuery {
+    table: String,
+    id: Option<uuid::Uuid>,
+    data_type: Option<impl DataType>,
+}
+
 
 impl Drop for Db {
     fn drop(&mut self) {
@@ -61,6 +118,6 @@ impl Drop for Db {
     }
 }
 
+pub trait DataType {
 
-
-
+}

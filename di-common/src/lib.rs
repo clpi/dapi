@@ -1,3 +1,4 @@
+pub mod types;
 pub mod models;
 pub mod auth;
 
@@ -11,6 +12,6 @@ macro_rules! test {
 mod tests {
     #[test]
     fn it_works() {
-        
+
     }
 }

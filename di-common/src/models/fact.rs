@@ -1,3 +1,7 @@
+use dynomite::{
+    Attribute, DynamoDbExt, FromAttributes, AttributeValue,
+    dynamodb::{DynamoDb, DynamoDbClient}
+};
 use sqlx::{Postgres, FromRow, postgres::*};
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
@@ -7,10 +11,12 @@ use super::{
     //link::{ItemFieldLink, RecordItemLink},
 };
 
-#[derive(FromRow, Serialize, Deserialize, Clone)]
-pub struct Item {
+#[derive(FromRow, dynomite::Item, Serialize, Deserialize, Clone)]
+pub struct Fact {
     #[serde(default = "uuid::Uuid::new_v4")]
+    #[dynomite(sort_key)]
     pub id: uuid::Uuid,
+    #[dynomite(partition_key)]
     pub uid: uuid::Uuid,
     pub name: String,
     //#[serde(default = "Status::active")]
@@ -21,6 +27,3 @@ pub struct Item {
     pub created_at: DateTime<Utc>,
 }
 
-impl Model for Item {
-    fn table() -> String { String::from("Items") }
-}

@@ -8,7 +8,6 @@ use super::{
 };
 
 #[derive(FromRow, Serialize, Deserialize)]
-#[serde(rename_all="camelCase")]
 pub struct Record {
     #[serde(default = "uuid::Uuid::new_v4")]
     pub id: uuid::Uuid,
