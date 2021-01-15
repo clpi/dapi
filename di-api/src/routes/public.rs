@@ -23,6 +23,22 @@ pub fn set_routes(app: &mut tide::Server<Context>) {
         tera.render_response("user.html", &context! { "user" => user })
     });
 
+    app.at("/contact").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        tera.render_response("contact.html", &context! {})
+    });
+    app.at("/cover").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        tera.render_response("cover.html", &context! {})
+    });
+    app.at("/about").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        tera.render_response("about.html", &context! {})
+    });
+    app.at("/dashboard").get(|req: tide::Request<Context>| async move {
+        let tera = &req.state().tera;
+        tera.render_response("dashboard.html", &context! {})
+    });
     app.at("/login").get(|req: tide::Request<Context>| async move {
         let tera = &req.state().tera;
         tera.render_response("login.html", &context! {})
