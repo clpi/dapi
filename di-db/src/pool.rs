@@ -14,7 +14,7 @@ pub struct Db {
 
 impl Db {
 
-    pub fn url() -> Result<String, dotenv::Error> {
+    pub fn url() -> dotenv::Result<String> {
         dotenv::var("DATABASE_URL")
     }
 
@@ -23,22 +23,23 @@ impl Db {
             .max_connections(5)
     }
 
-    pub async fn new() -> sqlx::Result<Self> {
+    pub async fn new() -> divc::DResult<Self> {
         let pool = Self::pool_options()
             .connect(&Self::url()?)
             .await?;
         Ok ( Db { pool } )
     }
 
-    pub fn new_blocking() -> sqlx::Result<Self> {
+    pub fn new_blocking() -> divc::DResult<Self> {
+        let url = Self::url()?;
         let pool = Self::pool_options()
-            .connect(&Self::url()?);
+            .connect(&url);
         let pool = async_std::task::block_on(pool)?;
         Ok( Self { pool  } )
 
     }
 
-    pub async fn listen(self, channel: &str) -> sqlx::Result<()> {
+    pub async fn listen(self, channel: &str) -> divc::DResult<()> {
         let mut listener = PgListener::connect_with(&self.pool).await?;
         listener.listen(channel).await?;
         loop  {
@@ -86,29 +87,18 @@ impl Db {
     }
 
     pub async fn conn(&self) -> sqlx::Result<sqlx::pool::PoolConnection<Postgres>> {
-        Ok(self.pool.try_acquire().await?)
+        Ok(self.pool.acquire().await?)
 
     }
 
-    pub async fn from_id(i)
-
-    pub async fn up(self) -> sqlx::Result<Self> {
-        sqlx::query_file_unchecked!("sql/tables/users.sql")
-            .execute(&self.pool).await.unwrap();
-        sqlx::query_file_unchecked!("sql/tables/records.sql")
-            .execute(&self.pool).await.unwrap();
-        sqlx::query_file_unchecked!("sql/tables/items.sql")
-            .execute(&self.pool).await.unwrap();
-        sqlx::query_file_unchecked!("sql/tables/groups.sql")
-            .execute(&self.pool).await.unwrap();
-        Ok(self)
+    pub async fn from_id(&self, id: uuid::Uuid) -> sqlx::Result<()> {
+        Ok(())
     }
 }
 
 pub struct TableQuery {
     table: String,
     id: Option<uuid::Uuid>,
-    data_type: Option<impl DataType>,
 }
 
 
@@ -118,6 +108,3 @@ impl Drop for Db {
     }
 }
 
-pub trait DataType {
-
-}

@@ -2,10 +2,9 @@ use divd::PgPool;
 use divc::auth::{get_secret_key, get_jwt_secret};
 
 pub async fn create() -> tide::Result<Context> {
-    let db = divd::Db::new().await?
-        .clear().await?
-        .up().await?;
-
+    let db = divd::Db::new().await?;
+    // db.down().await?;
+    db.up().await?;
     let secret_key = get_secret_key().await?;
     let jwt_key = get_jwt_secret().await?;
     let mut tera = tera::Tera::new("assets/static/templates/**/*").expect("Could not load tera");

@@ -17,4 +17,5 @@ uuid = { version = "*", features = ["serde", "v4"] }
 argonautica="*"
 jsonwebtoken="*"
 dynomite = "*"
+async-trait = "0.1.42"
 #dasp = "*"

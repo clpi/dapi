@@ -1,6 +1,10 @@
+pub mod error;
 pub mod types;
 pub mod models;
 pub mod auth;
+pub use types::{Status, Visibility};
+
+pub use error::{DError, DResult};
 
 #[macro_export]
 macro_rules! test {

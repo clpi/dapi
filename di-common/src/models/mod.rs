@@ -9,15 +9,20 @@ pub use self::{
     user::User,
     record::Record,
     item::Item,
-    fact::Fact,
 };
 
-pub use sqlx::FromRow;
+pub use sqlx::{FromRow, prelude::*,};
 use chrono::Utc;
 pub use serde::{Deserialize, Serialize};
 
+#[async_trait::async_trait]
 pub trait Model {
     fn table() -> String;
+
+    async fn insert(&self, pool: sqlx::PgPool) -> sqlx::Result<()> {
+        // pool.execute("INSERT INTO ? ")
+        Ok(())
+    }
 
 }
 

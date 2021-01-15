@@ -13,4 +13,9 @@ use crate::auth::{hash_pwd, get_secret_key};
 #[derive(FromRow, Serialize, Deserialize)]
 pub struct Action {
     pub id: Uuid,
+    pub name: String,
 }
+
+// impl Model for Action {
+
+// }
