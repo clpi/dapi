@@ -3,7 +3,7 @@ use divc::auth::{get_secret_key, get_jwt_secret};
 
 pub async fn create() -> tide::Result<Context> {
     let db = divd::Db::new().await?;
-    // db.down().await?;
+    db.down().await?;
     db.up().await?;
     let secret_key = get_secret_key().await?;
     let jwt_key = get_jwt_secret().await?;

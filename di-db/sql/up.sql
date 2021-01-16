@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Users (
-    id          UUID NOT NULL PRIMARY KEY,
+    id          UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     email       TEXT NOT NULL UNIQUE,
     username    TEXT NOT NULL UNIQUE CHECK (char_length(username) < 40),
     password    TEXT DEFAULT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS UserInfo (
-    id           UUID PRIMARY KEY NOT NULL,
+    id           UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     uid          UUID NOT NULL REFERENCES Users(id),
     first_name   TEXT CHECK (CHAR_LENGTH(first_name) < 80),
     mid_initial  CHAR,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS UserInfo (
 );
 
 CREATE TABLE IF NOT EXISTS Groups (
-    id UUID PRIMARY KEY NOT NULL,
+    id         UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     uid UUID NOT NULL REFERENCES Users(id),
     name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80) UNIQUE,
     description TEXT,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS Groups (
 );
 
 CREATE TABLE IF NOT EXISTS Records (
-    id UUID PRIMARY KEY NOT NULL,
+    id         UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     uid UUID NOT NULL REFERENCES Users(id),
     name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
     description TEXT,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Records (
 );
 
 CREATE TABLE IF NOT EXISTS Items (
-    id UUID PRIMARY KEY NOT NULL,
+    id         UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     uid UUID NOT NULL REFERENCES Users(id),
     name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
     description TEXT,
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS Items (
     UNIQUE (name, uid)
 );
 
-CREATE TABLE IF NOT EXISTS FactType (
-    id UUID PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS FactTypes (
+    id         UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     uid UUID NOT NULL REFERENCES Users(id),
     name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
     description TEXT,
@@ -80,8 +80,8 @@ CREATE TABLE IF NOT EXISTS FactType (
     UNIQUE (uid, name)
 );
 
-CREATE TABLE IF NOT EXISTS FactEntry (
-    id UUID PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS FactEntries (
+    id         UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     uid UUID NOT NULL REFERENCES Users(id),
     name TEXT NOT NULL CHECK (CHAR_LENGTH(name) < 80),
     value TEXT NOT NULL,

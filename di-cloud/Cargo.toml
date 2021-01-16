@@ -3,8 +3,14 @@ name = "div_cloud"
 version = "0.1.0"
 authors = ["Chris P <chrisp1877@gmail.com>"]
 edition = "2018"
+default-run = "main"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
 
 [dependencies]
 rusoto = "*"
@@ -13,3 +19,4 @@ rusoto_s3 = "0.46.0"
 rusoto_dynamodb = "0.46.0"
 dynomite = "*"
 rusoto_credential = "0.46.0"
+async-std = { version = "*", features = ["attributes"] }
